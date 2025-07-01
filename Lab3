@@ -1,0 +1,77 @@
+CONTROL
+DEFAULT.ASPX:
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+        SERVER CONTROLS</div>
+    <asp:Label ID="lblName" runat="server" Text="Full Name"></asp:Label>
+    <asp:TextBox ID="txtName" runat="server"></asp:TextBox>
+    <p>
+        <asp:Label ID="lblEmail" runat="server" Text="Email address"></asp:Label>
+        <asp:TextBox ID="txtEmail" runat="server"></asp:TextBox>
+    </p>
+    <asp:Label ID="lblGender" runat="server" Text="Gender"></asp:Label>
+    <asp:RadioButtonList ID="rblGender" runat="server">
+        <asp:ListItem>male</asp:ListItem>
+        <asp:ListItem>female</asp:ListItem>
+        <asp:ListItem>others</asp:ListItem>
+    </asp:RadioButtonList>
+    <br />
+    <br />
+    <br />
+    <asp:Label ID="lblCountry" runat="server" Text="Country"></asp:Label>
+    <asp:DropDownList ID="ddlCountry" runat="server">
+        <asp:ListItem>select country</asp:ListItem>
+        <asp:ListItem>India</asp:ListItem>
+        <asp:ListItem>U.S.A</asp:ListItem>
+        <asp:ListItem>U.K</asp:ListItem>
+        <asp:ListItem>Canada</asp:ListItem>
+    </asp:DropDownList>
+    <br />
+    <p>
+        <asp:CheckBox ID="chkTerms" runat="server" 
+            Text="I ACCEPT THE TERMS AND CONDITIONS" />
+    </p>
+    <asp:Button ID="btnRegister" runat="server" Text="Register" OnClick="btnRegister_Click" />
+    <p>
+    <asp:Label ID="lblMessage" runat="server" ></asp:Label>
+    </p>
+    </form>
+</body>
+</html>
+DEFAULT.ASPX.CS:
+using System;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void btnRegister_Click(object sender, EventArgs e)
+    {
+        if (chkTerms.Checked)
+        {
+            string name = txtName.Text;
+            string email = txtEmail.Text;
+            string gender = rblGender.SelectedValue;
+            string country = ddlCountry.SelectedItem.Text;
+
+            lblMessage.Text = string.Format("Registration Successful!<br />" +
+                              "Name: {0}<br />" +
+                              "Email: {1}<br />" +
+                              "Gender: {2}<br />" +
+                              "Country: {3}", name, email, gender, country);
+
+        }
+        else
+        {
+            lblMessage.Text = "You must accept the Terms & Conditions to register.";
+        }
+    }
+}
