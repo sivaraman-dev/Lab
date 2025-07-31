@@ -1,0 +1,230 @@
+6. Web Page design using Rich control. Validate user input using Validation controls.   Working with File concepts.
+
+
+Home.aspx
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Home.aspx.cs" Inherits="Home" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Home - Govt Exam Registration</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <h2>Welcome to Government Exam Registration Portal</h2>
+            <asp:Button ID="btnStart" runat="server" Text="Click Here to Go to Registration Page" OnClick="btnStart_Click" />
+        </div>
+    </form>
+</body>
+</html>
+
+
+
+
+Home.aspx.cs
+
+using System;
+
+public partial class Home : System.Web.UI.Page
+{
+    protected void btnStart_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("Registration.aspx");
+    }
+}
+
+
+
+
+
+Registration.aspx
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Registration.aspx.cs" Inherits="Registration" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Registration</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <h2>Registration Form</h2>
+            Name: <asp:TextBox ID="txtName" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvName" runat="server" ControlToValidate="txtName" ErrorMessage="* Required" ForeColor="Red"></asp:RequiredFieldValidator><br /><br />
+            
+            Date of Birth: <asp:Calendar ID="CalDOB" runat="server"></asp:Calendar><br /><br />
+            
+            Gender:
+            <asp:RadioButtonList ID="rblGender" runat="server">
+                <asp:ListItem>Male</asp:ListItem>
+                <asp:ListItem>Female</asp:ListItem>
+            </asp:RadioButtonList>
+            <asp:RequiredFieldValidator ID="rfvGender" runat="server" ControlToValidate="rblGender" InitialValue="" ErrorMessage="* Required" ForeColor="Red"></asp:RequiredFieldValidator><br /><br />
+            
+            <asp:Button ID="btnNext" runat="server" Text="Next" OnClick="btnNext_Click" />
+        </div>
+    </form>
+</body>
+</html>
+
+
+
+
+Registration.aspx.cs
+using System;
+
+public partial class Registration : System.Web.UI.Page
+{
+    protected void btnNext_Click(object sender, EventArgs e)
+    {
+        Session["Name"] = txtName.Text;
+        Session["DOB"] = CalDOB.SelectedDate.ToShortDateString();
+        Session["Gender"] = rblGender.SelectedValue;
+        Response.Redirect("ValidationForm.aspx");
+    }
+}
+
+
+
+
+ValidationForm.aspx
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ValidationForm.aspx.cs" Inherits="ValidationForm" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Validation Form</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <h2>Contact </h2>
+            Email: <asp:TextBox ID="txtEmail" runat="server"></asp:TextBox>
+            <asp:RegularExpressionValidator ID="revEmail" runat="server" ControlToValidate="txtEmail" ErrorMessage="Invalid email" ValidationExpression="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$" ForeColor="Red"></asp:RegularExpressionValidator>
+            <asp:RequiredFieldValidator ID="rfvEmail" runat="server" ControlToValidate="txtEmail" ErrorMessage="* Required" ForeColor="Red"></asp:RequiredFieldValidator><br /><br />
+
+            Phone: <asp:TextBox ID="txtPhone" runat="server"></asp:TextBox>
+            <asp:RegularExpressionValidator ID="revPhone" runat="server" ControlToValidate="txtPhone" ErrorMessage="Invalid phone number" ValidationExpression="^[0-9]{10}$" ForeColor="Red"></asp:RegularExpressionValidator>
+            <asp:RequiredFieldValidator ID="rfvPhone" runat="server" ControlToValidate="txtPhone" ErrorMessage="* Required" ForeColor="Red"></asp:RequiredFieldValidator><br /><br />
+
+            <asp:Button ID="btnNext" runat="server" Text="Next" OnClick="btnNext_Click" />
+        </div>
+    </form>
+</body>
+</html>
+
+
+
+
+ValidationForm.aspx.cs
+using System;
+
+public partial class ValidationForm : System.Web.UI.Page
+{
+    protected void btnNext_Click(object sender, EventArgs e)
+    {
+        Session["Email"] = txtEmail.Text;
+        Session["Phone"] = txtPhone.Text;
+        Response.Redirect("FileUpload.aspx");
+    }
+}
+    
+FileUpload.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="FileUpload.aspx.cs" Inherits="FileUpload" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>File Upload</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <h2>Upload Photo</h2>
+            <asp:FileUpload ID="FileUpload1" runat="server" />
+            <asp:RequiredFieldValidator ID="rfvUpload" runat="server" ControlToValidate="FileUpload1" ErrorMessage="* Required" ForeColor="Red"></asp:RequiredFieldValidator><br /><br />
+            <asp:Button ID="btnFinish" runat="server" Text="Finish" OnClick="btnFinish_Click" /><br /><br />
+            <asp:Label ID="lblMessage" runat="server" ForeColor="Green"></asp:Label>
+        </div>
+    </form>
+</body>
+</html>
+
+
+
+FileUpload.aspx.cs
+using System;
+using System.IO;
+
+public partial class FileUpload : System.Web.UI.Page
+{
+    protected void btnFinish_Click(object sender, EventArgs e)
+    {
+        if (FileUpload1.HasFile)
+        {
+            string folder = Server.MapPath("~/Uploads/");
+            string fileName = Path.GetFileName(FileUpload1.FileName);
+            FileUpload1.SaveAs(folder + fileName);
+            Session["Photo"] = fileName;
+            lblMessage.Text = "File uploaded successfully!";
+            Response.Redirect("Summary.aspx");
+        }
+        else
+        {
+            lblMessage.Text = "Please select a file.";
+        }
+    }
+}
+
+
+Summary.aspx
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Summary.aspx.cs" Inherits="Summary" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Summary</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <h2>Registration Summary</h2>
+            <asp:Label ID="lblSummary" runat="server" ForeColor="Green"></asp:Label><br /><br />
+            <asp:Image ID="imgPhoto" runat="server" Width="150px" />
+        </div>
+    </form>
+</body>
+</html>
+
+
+
+
+Summary.aspx.cs
+
+using System;
+
+public partial class Summary : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (Session["Name"] != null)
+        {
+            lblSummary.Text = "Your details uploaded successfully!<br /><br />" +
+                string.Format("Name: {0}<br />DOB: {1}<br />Gender: {2}<br />Email: {3}<br />Phone: {4}",
+                Session["Name"], Session["DOB"], Session["Gender"], Session["Email"], Session["Phone"]);
+
+            if (Session["Photo"] != null)
+            {
+                imgPhoto.ImageUrl = "~/Uploads/" + Session["Photo"];
+            }
+        }
+        else
+        {
+            lblSummary.Text = "No data found.";
+        }
+    }
+}
+
+
+
+
