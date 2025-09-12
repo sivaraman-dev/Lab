@@ -1,0 +1,84 @@
+Login.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Login.aspx.cs" Inherits="Login" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Login Page</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <h2>Login</h2>
+        <asp:Label ID="lblMessage" runat="server" ForeColor="Red"></asp:Label><br />
+        <asp:Label ID="lblUsername" runat="server" Text="Username:"></asp:Label>
+        <asp:TextBox ID="txtUsername" runat="server"></asp:TextBox><br /><br />
+        <asp:Label ID="lblPassword" runat="server" Text="Password:"></asp:Label>
+        <asp:TextBox ID="txtPassword" runat="server" TextMode="Password"></asp:TextBox><br /><br />
+        <asp:Button ID="btnLogin" runat="server" Text="Login" OnClick="btnLogin_Click" />
+    </form>
+</body>
+</html>
+
+
+
+
+Login.aspx.cs
+using System;
+using System.Web.Security;
+
+public partial class Login : System.Web.UI.Page
+{
+    protected void btnLogin_Click(object sender, EventArgs e)
+    {
+        if (txtUsername.Text == "admin" && txtPassword.Text == "admin123")
+        {
+            FormsAuthentication.RedirectFromLoginPage(txtUsername.Text, false);
+            Response.Redirect("AdminPage.aspx");
+        }
+        else
+        {
+            lblMessage.Text = "Invalid username or password!";
+        }
+    }
+}
+
+AdminPage.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="AdminPage.aspx.cs" Inherits="AdminPage" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Admin Page</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <h2>Welcome, you are authorized!</h2>
+        <asp:Button ID="btnLogout" runat="server" Text="Logout" OnClick="btnLogout_Click" />
+    </form>
+</body>
+</html>
+
+
+
+
+AdminPage.aspx.cs
+
+using System;
+
+public partial class AdminPage : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            Response.Redirect("Login.aspx");
+        }
+    }
+
+    protected void btnLogout_Click(object sender, EventArgs e)
+    {
+        System.Web.Security.FormsAuthentication.SignOut();
+        Response.Redirect("Login.aspx");
+    }
+}
+
