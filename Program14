@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Ticket Reservation</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div style="width:400px; margin:auto; padding:20px; border:1px solid #ccc;">
+        <h2>Ticket Reservation</h2>
+
+        <asp:Label ID="lblName" runat="server" Text="Name:" AssociatedControlID="txtName"></asp:Label><br />
+        <asp:TextBox ID="txtName" runat="server"></asp:TextBox><br /><br />
+
+        <asp:Label ID="lblDestination" runat="server" Text="Destination:" AssociatedControlID="ddlDestination"></asp:Label><br />
+        <asp:DropDownList ID="ddlDestination" runat="server">
+            <asp:ListItem Text="Select Destination" Value="" />
+            <asp:ListItem Text="New York" Value="New York" />
+            <asp:ListItem Text="Los Angeles" Value="Los Angeles" />
+            <asp:ListItem Text="Chicago" Value="Chicago" />
+            <asp:ListItem Text="Miami" Value="Miami" />
+        </asp:DropDownList><br /><br />
+
+        <asp:Label ID="lblTickets" runat="server" Text="Number of Tickets:" AssociatedControlID="txtTickets"></asp:Label><br />
+        <asp:TextBox ID="txtTickets" runat="server"></asp:TextBox><br /><br />
+
+        <asp:Button ID="btnReserve" runat="server" Text="Reserve" OnClick="btnReserve_Click" /><br /><br />
+
+        <asp:Label ID="lblMessage" runat="server" ForeColor="Green"></asp:Label>
+    </div>
+    </form>
+</body>
+</html>
+
+
+
+
+
+
+TicketReservation.aspx.cs
+using System;
+
+namespace YourNamespace
+{
+    public partial class TicketReservation : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            lblMessage.Text = "";
+        }
+
+        protected void btnReserve_Click(object sender, EventArgs e)
+        {
+            string name = txtName.Text.Trim();
+            string destination = ddlDestination.SelectedValue;
+            string ticketsText = txtTickets.Text.Trim();
+
+            int tickets;
+            if (string.IsNullOrEmpty(name))
+            {
+                lblMessage.ForeColor = System.Drawing.Color.Red;
+                lblMessage.Text = "Please enter your name.";
+                return;
+            }
+
+            if (string.IsNullOrEmpty(destination))
+            {
+                lblMessage.ForeColor = System.Drawing.Color.Red;
+                lblMessage.Text = "Please select a destination.";
+                return;
+            }
+
+            if (!int.TryParse(ticketsText, out tickets) || tickets <= 0)
+            {
+                lblMessage.ForeColor = System.Drawing.Color.Red;
+                lblMessage.Text = "Please enter a valid number of tickets.";
+                return;
+            }
+
+
+            lblMessage.ForeColor = System.Drawing.Color.Green;
+            lblMessage.Text = string.Format("Thank you, {0}. Your reservation for {1} ticket(s) to {2} is confirmed!", name, tickets, destination);
+        }
+    }
+}
