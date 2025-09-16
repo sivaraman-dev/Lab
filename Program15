@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head><title>ASP.NET Quiz</title></head>
+<body>
+<form id="form1" runat="server">
+    <div style="padding:30px; max-width:700px; margin:auto;">
+        <h2>ASP.NET Quiz</h2>
+        <asp:Label ID="lblQuestion" runat="server" Font-Size="Large" Font-Bold="True" /><br /><br />
+        <asp:RadioButtonList ID="rblOptions" runat="server" RepeatDirection="Vertical" /><br />
+        <asp:Button ID="btnNext" runat="server" Text="Next" OnClick="btnNext_Click" /><br /><br />
+    </div>
+</form>
+</body>
+</html>
+
+
+
+OnlineExam.aspx.cs
+using System;
+using System.Collections.Generic;
+
+public partial class OnlineExam : System.Web.UI.Page
+{
+    static List<Question> questions = new List<Question>
+    {
+        new Question { Text = "1. What does ASP.NET stand for?",
+            Options = new[] { "Active Server Pages .NET", "Application Service Protocol", "Abstract Server Programming", "None" },
+            Answer = "Active Server Pages .NET" },
+        new Question { Text = "2. Which language is commonly used with ASP.NET for server-side programming?",
+            Options = new[] { "Java", "C#", "Python", "PHP" },
+            Answer = "C#" },
+
+        new Question { Text = "3. Which control is used to validate user input in ASP.NET?",
+            Options = new[] { "InputValidator", "TextBox", "ValidationControl", "RequiredFieldValidator" },
+            Answer = "RequiredFieldValidator" },
+
+        new Question { Text = "4. What is the file extension of an ASP.NET Web Form?",
+            Options = new[] { ".aspx", ".asp", ".html", ".cshtml" },
+            Answer = ".aspx" },
+
+        new Question { Text = "5. Which object is used to manage state in ASP.NET?",
+            Options = new[] { "Request", "Session", "ViewData", "Form" },
+            Answer = "Session" },
+
+        new Question { Text = "6. Which method is used to transfer control from one page to another in ASP.NET?",
+            Options = new[] { "Redirect()", "Transfer()", "Execute()", "Both Redirect() and Transfer()" },
+            Answer = "Both Redirect() and Transfer()" },
+
+        new Question { Text = "7. What is the default event of a Button control in ASP.NET?",
+            Options = new[] { "Click", "Load", "Submit", "Press" },
+            Answer = "Click" },
+
+        new Question { Text = "8. Which data control is used to display tabular data in ASP.NET?",
+            Options = new[] { "GridView", "Table", "Repeater", "Label" },
+            Answer = "GridView" },
+
+        new Question { Text = "9. Where does server-side code execute in ASP.NET?",
+            Options = new[] { "On client browser", "On user's computer", "On web server", "In JavaScript" },
+            Answer = "On web server" },
+
+        new Question { Text = "10. Which of the following is NOT an ASP.NET validation control?",
+            Options = new[] { "RequiredFieldValidator", "RangeValidator", "SqlValidator", "RegularExpressionValidator" },
+            Answer = "SqlValidator" }
+
+    };
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            Session["qIndex"] = 0;
+            Session["score"] = 0;
+            LoadQuestion();
+        }
+    }
+
+    private void LoadQuestion()
+    {
+        int index = (int)Session["qIndex"];
+        if (index < questions.Count)
+        {
+            lblQuestion.Text = questions[index].Text;
+            rblOptions.DataSource = questions[index].Options;
+            rblOptions.DataBind();
+        }
+        else
+        {
+            Response.Redirect("Result.aspx");
+        }
+    }
+
+    protected void btnNext_Click(object sender, EventArgs e)
+    {
+        int index = (int)Session["qIndex"];
+        if (rblOptions.SelectedItem != null && rblOptions.SelectedItem.Text == questions[index].Answer)
+        {
+            Session["score"] = (int)Session["score"] + 1;
+        }
+        Session["qIndex"] = index + 1;
+        LoadQuestion();
+    }
+}
+
+public class Question
+{
+    public string Text { get; set; }
+    public string[] Options { get; set; }
+    public string Answer { get; set; }
+}
+
+Result.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Result.aspx.cs" Inherits="Result" %>
+
+<!DOCTYPE html>
+<html>
+<head><title>Result</title></head>
+<body>
+<form id="form1" runat="server">
+    <div style="text-align:center; margin-top:100px;">
+        <asp:Label ID="lblScore" runat="server" Font-Size="X-Large" ForeColor="Green" /><br /><br />
+        <asp:Label ID="lblMessage" runat="server" Font-Size="Large" ForeColor="Blue" />
+    </div>
+</form>
+</body>
+</html>
+
+
+Result.aspx.cs
+using System;
+
+public partial class Result : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (Session["score"] != null)
+        {
+            lblScore.Text = " Your Final Score: 10 / " + Session["score"].ToString();
+            lblMessage.Text = " Thank you for participating in the exam!";
+        }
+    }
+}
